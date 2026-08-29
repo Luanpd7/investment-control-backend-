@@ -158,16 +158,18 @@ func (r *InvestmentRecordRepositoryImpl) DataDashboard(start, end time.Time) (en
 
 	query := `
 	SELECT
-	 COALESCE(SUM(emergency), 0) AS emergency,
-	 COALESCE(SUM(fixed_income), 0) AS fixed_income,
-	 COALESCE(SUM(variable_income), 0) AS variable_income,
-	 COALESCE(SUM(total), 0) AS total
+	 emergency AS emergency,
+	 fixed_income AS fixed_income,
+	 variable_income AS variable_income,
+	 total AS total
 	FROM investments
 	`
 	var args []interface{}
 
 	if !start.IsZero() && !end.IsZero() {
-		query += ` WHERE date >= $1 AND date < $2`
+		query += ` WHERE date >= $1 AND date < $2
+		           ORDER BY date DESC
+	               LIMIT 1`
 		args = append(args, start, end)
 	}
 
@@ -183,20 +185,23 @@ func (r *InvestmentRecordRepositoryImpl) DataDashboard(start, end time.Time) (en
 }
 
 func (r *InvestmentRecordRepositoryImpl) AssetGrowth(start, end time.Time) ([]entities.AssetGrowth, error) {
-	query := `
-	SELECT 
-	   DISTINCT EXTRACT(YEAR FROM date) AS year , 
-	   SUM(total) 
+query := `
+	SELECT DISTINCT ON (EXTRACT(YEAR FROM date))
+		EXTRACT(YEAR FROM date) AS year,
+		total
 	FROM investments
-	`
-	var args []interface{}
+`
 
-	if !start.IsZero() && !end.IsZero() {
-		query += ` WHERE date >= $1 AND date < $2`
-		args = append(args, start, end)
-	}
+var args []interface{}
 
-	query += ` GROUP BY year ORDER BY year ASC`
+if !start.IsZero() && !end.IsZero() {
+	query += ` WHERE date >= $1 AND date < $2`
+	args = append(args, start, end)
+}
+
+query += `
+	ORDER BY EXTRACT(YEAR FROM date), date DESC
+`
 
 	rows, err := database.DB.Query(query, args...)
 	if err != nil {
