@@ -87,7 +87,6 @@ func (r *InvestmentRecordRepositoryImpl) GetAllInvestmentRecords(start, end time
 	query := `
 	SELECT id, date, emergency, fixed_income, variable_income, contribution, variation, total
 	FROM investments
-
 	`
 
 	var args []interface{}
@@ -128,14 +127,23 @@ func (r *InvestmentRecordRepositoryImpl) GetAllInvestmentRecords(start, end time
 	return records, nil
 }
 
-func (r *InvestmentRecordRepositoryImpl) GetLastInvestmentRecord() (*entities.InvestmentRecord, error) {
+func (r *InvestmentRecordRepositoryImpl) GetLastInvestmentRecord(date string) (*entities.InvestmentRecord, error) {
 	query := `
 	SELECT date, emergency, fixed_income, variable_income, contribution, variation, total	
 	FROM investments
-	ORDER BY date DESC
-	LIMIT 1
 	`
-	row := database.DB.QueryRow(query)
+
+	var args []interface{}
+
+     if date != "" {
+		query += ` WHERE date < $1`
+	    args = append(args, date)
+	}
+	
+	query += ` ORDER BY date DESC 
+	           LIMIT 1`
+
+	row := database.DB.QueryRow(query, args...)
 
 	var record entities.InvestmentRecord
 	err := row.Scan(&record.Date, &record.Emergency, &record.FixedIncome, &record.VariableIncome, &record.Contribution, &record.Variation, &record.Total)

@@ -12,7 +12,7 @@ type InvestmentRecordRepository interface {
 
 	GetAllInvestmentRecords(start time.Time, end time.Time, ascending bool) ([]entities.InvestmentRecord, error)
 
-	GetLastInvestmentRecord() (*entities.InvestmentRecord, error)
+	GetLastInvestmentRecord(date string) (*entities.InvestmentRecord, error)
 
 	DataDashboard(start time.Time, end time.Time) (entities.InvestmentRecord, error)
 

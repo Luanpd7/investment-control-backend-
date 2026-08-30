@@ -58,7 +58,7 @@ func (uc *InvestmentRecordUseCase) variationInvestment(record *entities.Investme
 
 	/// Get the last investment record to calculate the variation
 
-	totalLastInvestment, err := uc.repository.GetLastInvestmentRecord()
+	totalLastInvestment, err := uc.repository.GetLastInvestmentRecord(record.Date)
 	if err != nil {
 		return 0.0
 	}
@@ -66,6 +66,7 @@ func (uc *InvestmentRecordUseCase) variationInvestment(record *entities.Investme
 	  if totalLastInvestment == nil {
         return 0.0
     }
+
 
 	variation := ((record.Emergency + record.FixedIncome + record.VariableIncome) - totalLastInvestment.Total)
 
@@ -158,7 +159,7 @@ func (uc *InvestmentRecordUseCase) GetLastInvestmentRecord() (*entities.Investme
 	var lastRecords *entities.InvestmentRecord
 	var err error
 
-	if lastRecords, err = uc.repository.GetLastInvestmentRecord(); err != nil {
+	if lastRecords, err = uc.repository.GetLastInvestmentRecord(""); err != nil {
 		return nil, err
 	}
 
