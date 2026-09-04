@@ -1,38 +1,40 @@
-# 📈 Simulador de Aposentadoria — Back-end
+# 💰 Controle de Investimentos — Back-end
 
-API REST desenvolvida em **Go (Golang)** para realizar simulações financeiras voltadas ao planejamento de aposentadoria e independência financeira.
+API REST desenvolvida em **Go (Golang)** para gerenciamento e acompanhamento de investimentos e patrimônio financeiro.
 
-O back-end recebe os dados informados pelo usuário, processa os cálculos financeiros e retorna os resultados da simulação para o front-end.
+O back-end é responsável pelo processamento das regras de negócio, gerenciamento dos registros de investimentos e comunicação com o banco de dados PostgreSQL.
 
 ## 🚀 Tecnologias
 
-- **Go (Golang):** utilizado no desenvolvimento da API e implementação das regras de negócio.
-- **Gin:** framework utilizado para criação do servidor HTTP e gerenciamento das rotas.
-- **REST API:** utilizada para comunicação entre o front-end e o back-end.
-- **Clean Architecture:** utilizada para organizar o projeto em camadas e separar responsabilidades.
-- **Repository Pattern:** utilizado para abstrair a persistência dos dados.
-- **Git / GitHub:** utilizados para controle de versão e gerenciamento do código.
+- **Go (Golang):** utilizado no desenvolvimento do back-end, implementando as regras de negócio e o processamento dos dados da aplicação.
+- **Gin:** framework utilizado para criação do servidor HTTP e gerenciamento das rotas da API REST.
+- **PostgreSQL:** banco de dados relacional utilizado para armazenamento e consulta dos registros de investimentos.
+- **REST API:** arquitetura utilizada para comunicação entre o back-end e o front-end através de requisições HTTP.
+- **Clean Architecture:** utilizada para organizar o projeto em camadas e separar responsabilidades, facilitando a manutenção e evolução da aplicação.
+- **AWS EC2:** serviço utilizado para hospedar e executar a API desenvolvida em Go.
+- **AWS RDS:** serviço utilizado para hospedar o banco de dados PostgreSQL.
+- **Cloudflare Tunnel:** utilizado para disponibilizar a API através de uma conexão HTTPS segura.
+- **Git / GitHub:** utilizados para controle de versão e gerenciamento do código-fonte.
 
 ## 📋 Funcionalidades
 
-- Simulação financeira para aposentadoria
-- Cálculo do patrimônio ao longo do tempo
-- Cálculo do patrimônio ajustado pela inflação
-- Cálculo de juros reais
-- Cálculo do total contribuído
-- Cálculo dos rendimentos obtidos
-- Simulação com aportes mensais
-- Cálculo do tempo até a aposentadoria
-- Geração da evolução patrimonial ao longo dos anos
-- Persistência dos dados da simulação
-- Retorno dos resultados através de API REST
+- Cadastro de registros de investimentos
+- Consulta do patrimônio
+- Consulta do histórico de investimentos
+- Filtro por ano e mês
+- Cálculo da variação do patrimônio
+- Consulta por categoria de investimento
+- Consulta da evolução anual do patrimônio
+- Consulta dos anos disponíveis
+- Recuperação do último registro de investimento
+- Fornecimento dos dados utilizados pelo dashboard
 
 ## 🏗️ Arquitetura
 
-O projeto utiliza **Clean Architecture** para separar as responsabilidades da aplicação.
+O projeto utiliza **Clean Architecture** para separar as responsabilidades da aplicação e facilitar sua manutenção e evolução.
 
 ```text
-simulator-api/
+investment-control-backend/
 │
 ├── data/
 │   ├── database/
@@ -50,75 +52,103 @@ simulator-api/
 └── main.go
 ```
 
-As regras de negócio ficam concentradas na camada de **use cases**, enquanto handlers e rotas ficam responsáveis pelo fluxo das requisições HTTP.
+## ☁️ Infraestrutura
 
-## 🔄 Fluxo da Aplicação
+A API está hospedada em uma instância **Amazon EC2** e utiliza um banco de dados **PostgreSQL hospedado no Amazon RDS**.
+
+O acesso externo à API é realizado através do **Cloudflare Tunnel**, permitindo que o front-end realize requisições HTTPS para o back-end.
 
 ```text
 Flutter Web
      │
-     │ REST API
+     │ Dio / HTTPS
      ▼
-   Routes
+Cloudflare Tunnel
      │
      ▼
-  Handlers
+AWS EC2
+Go + Gin REST API
      │
+     │ PostgreSQL
+     │ Porta 5432
      ▼
- Use Cases
-     │
-     ▼
-Repository
+AWS RDS
+PostgreSQL
 ```
 
-O front-end envia os dados da simulação para a API, o back-end processa as regras de negócio, realiza os cálculos financeiros e retorna os resultados ao usuário.
+- **Cloudflare Tunnel:** recebe as requisições HTTPS provenientes do front-end e as encaminha para a API.
+- **AWS EC2:** hospeda e executa a API REST desenvolvida em Go + Gin.
+- **AWS RDS:** hospeda o banco de dados PostgreSQL utilizado para persistência dos registros.
+- **Security Groups:** controlam o tráfego de rede entre os recursos da AWS.
+- **PostgreSQL (porta 5432):** utilizado na comunicação entre a API executada na EC2 e o banco hospedado no RDS.
 
-## 📥 Dados da Simulação
+## 🔄 Fluxo do Back-end
 
-A API recebe informações como:
+```text
+Requisição HTTP
+      │
+      ▼
+    Routes
+      │
+      ▼
+   Handlers
+      │
+      ▼
+   Use Cases
+      │
+      ▼
+ Repository
+      │
+      ▼
+ PostgreSQL
+  AWS RDS
+```
 
-- Patrimônio atual
-- Aporte mensal
-- Taxa de rentabilidade anual
-- Inflação
-- Idade atual
-- Idade desejada para aposentadoria
-- Tempo da simulação em anos
+Cada camada possui uma responsabilidade específica:
 
-## 📤 Resultados
-
-A partir dos dados informados, a API retorna indicadores como:
-
-- **Patrimônio final**
-- **Patrimônio final ajustado pela inflação**
-- **Taxa de juros real anual**
-- **Taxa de juros real mensal**
-- **Total contribuído**
-- **Total de rendimentos**
-- **Tempo até a aposentadoria**
-- **Evolução patrimonial ao longo dos anos**
+- **Routes:** define os endpoints disponíveis na API.
+- **Handlers:** recebe e trata as requisições HTTP.
+- **Use Cases:** contém as regras de negócio da aplicação.
+- **Repository:** realiza o acesso e manipulação dos dados.
+- **PostgreSQL:** realiza a persistência dos registros.
 
 ## 🔌 Endpoints
 
-A API disponibiliza atualmente os seguintes endpoints:
+A API disponibiliza os seguintes endpoints:
 
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
-| `GET` | `/test` | Verifica se a API está funcionando |
-| `POST` | `/simulation` | Executa uma nova simulação financeira |
+| `POST` | `/saveInvestment` | Salva um novo registro de investimento |
+| `GET` | `/getAllInvestment` | Retorna os registros de investimentos |
+| `GET` | `/dataDashboard` | Retorna os dados utilizados no dashboard |
+| `GET` | `/assetGrowth` | Retorna os dados de crescimento do patrimônio |
+| `GET` | `/categoryGrowth` | Retorna o crescimento dos investimentos por categoria |
+| `GET` | `/availableYears` | Retorna os anos disponíveis nos registros |
+| `GET` | `/lastInvestmentRecord` | Retorna o último registro de investimento |
+
+## 🔗 Front-end
+
+O front-end da aplicação foi desenvolvido utilizando **Flutter Web** e está hospedado na **Vercel**.
+
+Repositório:
+
+https://github.com/Luanpd7/investment-control-frontend
 
 ## 🎯 Objetivo do Projeto
 
-O projeto foi desenvolvido com o objetivo de aprimorar conhecimentos em **Go, Flutter, APIs REST, Clean Architecture e desenvolvimento Full Stack**, aplicando esses conceitos em uma aplicação voltada ao planejamento financeiro.
+O projeto foi desenvolvido para aplicar e aprimorar conhecimentos em desenvolvimento **Full Stack e Cloud**, utilizando uma arquitetura separada entre front-end, back-end e banco de dados.
 
-Além dos conhecimentos técnicos, o projeto também permitiu aplicar conceitos do mercado financeiro, como:
+Além do desenvolvimento da API, o projeto permitiu colocar em prática conceitos como:
 
-- Juros compostos
-- Juros reais
-- Inflação
-- Rentabilidade
-- Aportes mensais
-- Evolução patrimonial
-- Planejamento financeiro de longo prazo
-
-O projeto busca unir conhecimentos de **desenvolvimento de software e mercado financeiro** através de uma aplicação prática de simulação financeira.
+- Desenvolvimento de APIs REST com Go
+- Clean Architecture
+- PostgreSQL
+- Deploy de aplicações Go
+- Amazon EC2
+- Amazon RDS
+- VPC e Subnets
+- Security Groups
+- Comunicação entre EC2 e RDS
+- Cloudflare Tunnel
+- HTTPS
+- Integração entre Flutter Web e API REST
