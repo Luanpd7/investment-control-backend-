@@ -15,6 +15,7 @@ O back-end é responsável pelo processamento das regras de negócio, gerenciame
 - **AWS RDS:** serviço utilizado para hospedar o banco de dados PostgreSQL.
 - **Cloudflare Tunnel:** utilizado para disponibilizar a API através de uma conexão HTTPS segura.
 - **Git / GitHub:** utilizados para controle de versão e gerenciamento do código-fonte.
+- **JIRA:** Para organização nas demandas.
 
 ## 📋 Funcionalidades
 
