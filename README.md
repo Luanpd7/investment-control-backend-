@@ -4,6 +4,8 @@ API REST desenvolvida em **Go (Golang)** para gerenciamento e acompanhamento de 
 
 O back-end é responsável pelo processamento das regras de negócio, gerenciamento dos registros de investimentos e comunicação com o banco de dados PostgreSQL.
 
+- **[Ver publicação no LinkedIn](https://www.linkedin.com/posts/luan-pereira-dias-a327a0253_esse-projeto-web-foi-desenvolvido-inicialmente-activity-7498019662534914049-snNJ?utm_source=share&utm_medium=member_desktop&rcm=ACoAAD6WM8YBZpZBcOFJu9kQqXyrUpV5Vaoz8g4)**
+
 ## 🚀 Tecnologias
 
 - **Go (Golang):** utilizado no desenvolvimento do back-end, implementando as regras de negócio e o processamento dos dados da aplicação.
