@@ -1,123 +1,124 @@
-# 💰 Controle de investimento — Back-end
+# 📈 Simulador de Aposentadoria — Back-end
 
-API REST desenvolvida em Go para gerenciamento e acompanhamento de
-investimentos e patrimônio financeiro.
+API REST desenvolvida em **Go (Golang)** para realizar simulações financeiras voltadas ao planejamento de aposentadoria e independência financeira.
+
+O back-end recebe os dados informados pelo usuário, processa os cálculos financeiros e retorna os resultados da simulação para o front-end.
 
 ## 🚀 Tecnologias
 
-- **Go:**  (Golang): utilizado no desenvolvimento do back-end, implementando as regras de negócio e o processamento dos dados da aplicação.
-- **Gin:** framework utilizado para criação do servidor HTTP e gerenciamento das rotas da API REST.
-- **PostgreSQL:** banco de dados relacional utilizado para armazenamento e consulta dos registros de investimentos.
-- **REST API:** arquitetura utilizada para comunicação entre o back-end e o front-end, através de requisições HTTP e endpoints para consulta e manipulação dos dados.
-- **Clean Architecture:** utilizada para organizar o projeto em camadas e separar responsabilidades, facilitando a manutenção, evolução e testabilidade da aplicação.
-- **AWS EC2:** serviço utilizado para hospedar e executar a API desenvolvida em Go.
-- **AWS RDS:** serviço utilizado para hospedar o banco de dados PostgreSQL.
-- **Cloudflare Tunnel:** utilizado para disponibilizar a API através de uma conexão HTTPS segura.
-- **Git:** utilizado para controle de versão e gerenciamento do histórico de desenvolvimento do projeto.
+- **Go (Golang):** utilizado no desenvolvimento da API e implementação das regras de negócio.
+- **Gin:** framework utilizado para criação do servidor HTTP e gerenciamento das rotas.
+- **REST API:** utilizada para comunicação entre o front-end e o back-end.
+- **Clean Architecture:** utilizada para organizar o projeto em camadas e separar responsabilidades.
+- **Repository Pattern:** utilizado para abstrair a persistência dos dados.
+- **Git / GitHub:** utilizados para controle de versão e gerenciamento do código.
 
 ## 📋 Funcionalidades
 
-- Cadastro de registros de investimentos
-- Consulta do patrimônio
-- Consulta do histórico de investimentos
-- Filtro por ano e mês
-- Cálculo da variação do patrimônio
-- Consulta por categoria de investimento
-- Consulta da evolução anual do patrimônio
-- Consulta dos anos disponíveis
-- Recuperação do último registro de investimento
-- Fornecimento dos dados utilizados pelo dashboard
+- Simulação financeira para aposentadoria
+- Cálculo do patrimônio ao longo do tempo
+- Cálculo do patrimônio ajustado pela inflação
+- Cálculo de juros reais
+- Cálculo do total contribuído
+- Cálculo dos rendimentos obtidos
+- Simulação com aportes mensais
+- Cálculo do tempo até a aposentadoria
+- Geração da evolução patrimonial ao longo dos anos
+- Persistência dos dados da simulação
+- Retorno dos resultados através de API REST
 
 ## 🏗️ Arquitetura
 
-O projeto utiliza Clean Architecture para separar as responsabilidades
-da aplicação.
+O projeto utiliza **Clean Architecture** para separar as responsabilidades da aplicação.
 
 ```text
-financial-independence/
+simulator-api/
 │
 ├── data/
 │   ├── database/
-│   │
-│   └── repository/     
+│   └── repository/
 │
 ├── domain/
 │   ├── entities/
-│   │
 │   ├── repositories/
-│   │
 │   └── usecase/
 │
 ├── handlers/
 │
-└── routes/
+├── routes/
+│
+└── main.go
 ```
-## 🔌 Endpoints
 
-A API disponibiliza os seguintes endpoints:
+As regras de negócio ficam concentradas na camada de **use cases**, enquanto handlers e rotas ficam responsáveis pelo fluxo das requisições HTTP.
 
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| `POST` | `/saveInvestment` | Salva um novo registro de investimento |
-| `GET` | `/getAllInvestment` | Retorna todos os registros de investimentos |
-| `GET` | `/dataDashboard` | Retorna os dados utilizados no dashboard |
-| `GET` | `/assetGrowth` | Retorna os dados de crescimento do patrimônio |
-| `GET` | `/categoryGrowth` | Retorna o crescimento dos investimentos por categoria |
-| `GET` | `/availableYears` | Retorna os anos disponíveis nos registros |
-| `GET` | `/lastInvestmentRecord` | Retorna o último registro de investimento |
-
-## ☁️ Fluxo da comunicação
-
-A API está hospedada em uma instância **Amazon EC2** e utiliza um banco de dados **PostgreSQL hospedado no Amazon RDS**.
-
-O acesso externo à API é realizado através do **Cloudflare Tunnel**, permitindo que o front-end realize requisições HTTPS para o back-end.
+## 🔄 Fluxo da Aplicação
 
 ```text
 Flutter Web
      │
-     │ Dio / HTTPS
+     │ REST API
      ▼
-Cloudflare Tunnel
+   Routes
      │
      ▼
-AWS EC2
-Go + Gin REST API
+  Handlers
      │
-     │ PostgreSQL
-     │ Porta 5432
      ▼
-AWS RDS
-PostgreSQL
+ Use Cases
+     │
+     ▼
+Repository
 ```
 
-- **Cloudflare Tunnel:** recebe as requisições HTTPS provenientes do front-end e as encaminha para a API.
-- **AWS EC2:** hospeda e executa a API REST desenvolvida em Go + Gin.
-- **AWS RDS:** hospeda o banco de dados PostgreSQL utilizado para persistência dos registros.
-- **Security Groups:** controlam o tráfego de rede entre os recursos da AWS.
-- **PostgreSQL (porta 5432):** utilizado na comunicação entre a API executada na EC2 e o banco hospedado no RDS.
+O front-end envia os dados da simulação para a API, o back-end processa as regras de negócio, realiza os cálculos financeiros e retorna os resultados ao usuário.
+
+## 📥 Dados da Simulação
+
+A API recebe informações como:
+
+- Patrimônio atual
+- Aporte mensal
+- Taxa de rentabilidade anual
+- Inflação
+- Idade atual
+- Idade desejada para aposentadoria
+- Tempo da simulação em anos
+
+## 📤 Resultados
+
+A partir dos dados informados, a API retorna indicadores como:
+
+- **Patrimônio final**
+- **Patrimônio final ajustado pela inflação**
+- **Taxa de juros real anual**
+- **Taxa de juros real mensal**
+- **Total contribuído**
+- **Total de rendimentos**
+- **Tempo até a aposentadoria**
+- **Evolução patrimonial ao longo dos anos**
+
+## 🔌 Endpoints
+
+A API disponibiliza atualmente os seguintes endpoints:
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| `GET` | `/test` | Verifica se a API está funcionando |
+| `POST` | `/simulation` | Executa uma nova simulação financeira |
 
 ## 🎯 Objetivo do Projeto
 
-O projeto foi desenvolvido com o objetivo de aplicar e aprimorar conhecimentos em desenvolvimento **Full Stack e Cloud**, integrando front-end, back-end, banco de dados e infraestrutura em nuvem.
+O projeto foi desenvolvido com o objetivo de aprimorar conhecimentos em **Go, Flutter, APIs REST, Clean Architecture e desenvolvimento Full Stack**, aplicando esses conceitos em uma aplicação voltada ao planejamento financeiro.
 
-Além do desenvolvimento da aplicação, o projeto também teve como objetivo colocar em prática conhecimentos de **AWS**, realizando o deploy e a configuração da infraestrutura necessária para executar a aplicação em ambiente de nuvem.
+Além dos conhecimentos técnicos, o projeto também permitiu aplicar conceitos do mercado financeiro, como:
 
-Durante o desenvolvimento e deploy foram aplicados conceitos como:
+- Juros compostos
+- Juros reais
+- Inflação
+- Rentabilidade
+- Aportes mensais
+- Evolução patrimonial
+- Planejamento financeiro de longo prazo
 
-- Desenvolvimento de APIs REST com **Go + Gin**
-- **Clean Architecture**
-- **PostgreSQL**
-- Deploy de aplicações Go em **Amazon EC2**
-- Hospedagem do PostgreSQL no **Amazon RDS**
-- Configuração de **VPC**
-- Utilização de **subnets públicas e privadas**
-- Configuração de **Security Groups**
-- Comunicação entre **EC2 e RDS**
-- Configuração de regras de entrada e saída de rede
-- Utilização de **Internet Gateway e Route Tables**
-- Acesso e gerenciamento de instâncias EC2 via **SSH**
-- Configuração de variáveis de ambiente no servidor
-- Utilização do **Cloudflare Tunnel** para disponibilização da API via HTTPS
-- Integração entre **Flutter Web, API REST e infraestrutura AWS**
-
-Dessa forma, o projeto também serviu como ambiente prático para compreender como uma aplicação pode ser **implantada, configurada e executada na AWS**, abrangendo conceitos de infraestrutura, rede, segurança e computação em nuvem.
+O projeto busca unir conhecimentos de **desenvolvimento de software e mercado financeiro** através de uma aplicação prática de simulação financeira.
